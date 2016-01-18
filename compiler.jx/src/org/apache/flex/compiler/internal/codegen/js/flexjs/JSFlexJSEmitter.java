@@ -56,11 +56,9 @@ import org.apache.flex.compiler.internal.tree.as.BinaryOperatorAsNode;
 import org.apache.flex.compiler.internal.tree.as.BlockNode;
 import org.apache.flex.compiler.internal.tree.as.DynamicAccessNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionCallNode;
-import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.IdentifierNode;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.internal.tree.as.MemberAccessExpressionNode;
-import org.apache.flex.compiler.internal.tree.as.TernaryOperatorNode;
 import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
@@ -81,6 +79,7 @@ import org.apache.flex.compiler.tree.as.ILiteralContainerNode;
 import org.apache.flex.compiler.tree.as.ILiteralNode;
 import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
+import org.apache.flex.compiler.tree.as.IScopedDefinitionNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.ITypedExpressionNode;
@@ -368,33 +367,18 @@ public class JSFlexJSEmitter extends JSGoogEmitter implements IJSFlexJSEmitter
 	            for (int j = 0; j < snodeCount; j++)
 	            {
 	    	        IASNode cnode = snode.getChild(j);
-	    	        if (cnode instanceof IClassNode)
+	    	        if (cnode instanceof IScopedDefinitionNode)
 	    	        {
-	    	        	mainClassName = ((IClassNode)cnode).getQualifiedName();
+	    	        	mainClassName = ((IScopedDefinitionNode) cnode).getQualifiedName();
 	    	        	break;
 	    	        }
 	            }
 	        }
-	        else if (pnode instanceof IClassNode)
+	        else if (pnode instanceof IDefinitionNode)
 	        {
-	        	String className = ((IClassNode)pnode).getQualifiedName();
+	        	String className = ((IDefinitionNode)pnode).getQualifiedName();
 	        	getModel().getInternalClasses().put(className, mainClassName + "." + className);
 	        }
-	        else if (pnode instanceof IInterfaceNode)
-	        {
-	        	String className = ((IInterfaceNode)pnode).getQualifiedName();
-	        	getModel().getInternalClasses().put(className, mainClassName + "." + className);
-	        }
-            else if (pnode instanceof IFunctionNode)
-            {
-                String className = ((IFunctionNode)pnode).getQualifiedName();
-                getModel().getInternalClasses().put(className, mainClassName + "." + className);
-            }
-            else if (pnode instanceof IVariableNode)
-            {
-                String className = ((IVariableNode)pnode).getQualifiedName();
-                getModel().getInternalClasses().put(className, mainClassName + "." + className);
-            }
         }
 
         packageHeaderEmitter.emit(definition);
